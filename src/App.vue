@@ -1,30 +1,34 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
+  <modal-factory />
   <router-view/>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import { watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import ModalFactory from './components/ModalFactory'
+import services from './services'
+import { setCurrentUser } from './store/user'
 
-#nav {
-  padding: 30px;
-}
+export default {
+  components: { ModalFactory },
+  setup () {
+    const router = useRouter()
+    const route = useRoute()
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+    watch(() => route.path, async () => {
+      if (route.meta.hasAuth) {
+        const token = window.localStorage.getItem('token')
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+        if (!token) {
+          router.push({ name: 'Home' })
+          return
+        }
+
+        const { data } = await services.user.getMe()
+        setCurrentUser(data)
+      }
+    })
+  }
 }
-</style>
+</script>
