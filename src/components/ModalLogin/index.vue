@@ -72,6 +72,7 @@ import {
 } from '../../utils/validators'
 import useModal from '../../hooks/useModal'
 import services from '../../services'
+import { setCurrentUser } from '../../store/user'
 
 export default {
   components: { Icon },
@@ -107,13 +108,14 @@ export default {
       try {
         toast.clear()
         state.isLoading = true
-        const { data, errors } = await services.auth.login({
+        const { res, errors } = await services.auth.login({
           username: state.username.value,
           password: state.password.value
         })
 
         if (!errors) {
-          window.localStorage.setItem('token', data.token)
+          window.localStorage.setItem('token', res.data.token)
+          setCurrentUser(res.data.username)
           router.push({ name: 'Dashboard' })
           state.isLoading = false
           modal.close()

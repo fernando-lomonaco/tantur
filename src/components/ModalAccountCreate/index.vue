@@ -132,13 +132,13 @@ export default {
     })
 
     async function login ({ email, password }) {
-      const { data, errors } = await services.auth.login({
+      const { res, errors } = await services.auth.login({
         email,
         password
       })
 
       if (!errors) {
-        window.localStorage.setItem('token', data.token)
+        window.localStorage.setItem('token', res.data.token)
         router.push({ name: 'Feedbacks' })
         modal.close()
       }
