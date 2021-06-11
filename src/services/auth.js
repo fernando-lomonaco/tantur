@@ -34,7 +34,7 @@ export default httpClient => ({
     }
 
     return {
-      data: response.data,
+      res: response.data,
       errors
     }
   }
